@@ -3,9 +3,11 @@
 //Descrição  : Metodos para ser utilizados na automação de teste
 //Criado por : Carlos R. S. Oliveira
 //Criado em  : 20/04/2019
+//Versao     : 1.2
 //==============================================
 using Npgsql;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +24,9 @@ namespace Starline
     public class ProcessTest
     {
         //public string wpath = PastaBase "C:\\ProgramData\\SISTEMAS\\Prints\\PortalExtranet";
+        public string FotoBase64;
+        public int PontoCorteX = 0;
+        public int PontoCorteY = 0;
         static ConexaoNpgSql Conexao;
         public int CstID { get; set; }
         public int SitID { get; set; }
@@ -168,7 +173,8 @@ namespace Starline
             {
                 return string.Empty;
             }
-            Byte[] bytes = Encoding.GetEncoding("iso-8859-8").GetBytes(txt);
+            //iso-8859-8
+            Byte[] bytes = Encoding.GetEncoding("us-ascii").GetBytes(txt);
             return Encoding.UTF8.GetString(bytes);
         }
         public string Slugify(string value)
@@ -645,6 +651,22 @@ namespace Starline
                 return "";
             }
         }
+        public string GetImageBase64(Image image)
+        {
+            try
+            {
+                MemoryStream ms = new MemoryStream();
+                image.Save(ms, image.RawFormat);
+                byte[] ImgEmBytes = ms.ToArray();
+                return Convert.ToBase64String(ImgEmBytes);
+            }
+            catch (Exception ex)
+            {
+                Print("GetImageBase64(Image image)", ex);
+                return "";
+            }
+        }
+
         public bool Base64ToImage(string ImagemBase64, string file_full_path)
         {
             try
@@ -663,6 +685,22 @@ namespace Starline
                 return false;
             }
         }
+        public Image Base64ToImage(string ImagemBase64)
+        {
+            try
+            {
+                byte[] imgBytes = Convert.FromBase64String(ImagemBase64);
+                MemoryStream ms = new MemoryStream(imgBytes, 0, imgBytes.Length);
+                ms.Write(imgBytes, 0, imgBytes.Length);
+                return Image.FromStream(ms, true);
+            }
+            catch (Exception ex)
+            {
+                Print("Base64ToImage(string ImageBase64)", ex);
+                return null;
+            }
+        }
+
         public byte[] ImageToByte(Image PrintScreen)
         {
             if (PrintScreen != null)
@@ -787,7 +825,7 @@ namespace Starline
                 string _step = this.StepNumber.ToString().PadLeft(4, '0');
                 string _seq = this.StepTurn.ToString().PadLeft(2, '0');
                 string FileName = this.TestName.Replace(" ", "_");
-                string filename = wpath + "\\" + _step + "_" + _seq + "-" + FileName + ".png";
+                string filename = wpath + "/" + _step + "_" + _seq + "-" + FileName + ".png";
 
 
                 if (File.Exists(filename))
@@ -797,17 +835,35 @@ namespace Starline
 
                 if (Full)
                 {
-                    Bitmap stitchedImage = null;
-                    long totalwidth1 = (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return document.body.offsetWidth");//documentElement.scrollWidth");
+                    /*
+                        Dispositivo			Width	X	Heigh
+                        Reponsive			400		X	1397
+                        Galaxy S5			360		X	640			
+                        Pixel 2				411		X	731			
+                        Pixel 2 XL			411		X	823			
+                        iPhone 5/SE			320		X	568			
+                        iPhone 6/7/8		375		X	667			
+                        iPhone 6/7/8 Plus	414		X	736			
+                        iPhone X			375		X	812			
+                        iPad				768		X	1024		
+                        iPad Pro			1024	X	1366			
 
-                    long totalHeight1 = (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return  document.body.parentNode.scrollHeight");
+                     */
+
+
+                    Image img = GetImageDoScreeShot(DriverDoSelenium);
+
+                    Bitmap stitchedImage = null;
+
+                    long totalwidth1 = img.Width;// (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return document.width");// * DobretamanhoTela;//documentElement.scrollWidth");
+                    long totalHeight1 = (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return document.body.parentNode.scrollHeight");// * DobretamanhoTela;
 
                     int totalWidth = (int)totalwidth1;
                     int totalHeight = (int)totalHeight1;
 
                     // Get the Size of the Viewport
-                    long viewportWidth1 = (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return document.body.clientWidth");//documentElement.scrollWidth");
-                    long viewportHeight1 = (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return window.innerHeight");//documentElement.scrollWidth");
+                    long viewportWidth1 = img.Width;// (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return document.body.clientWidth"");// * DobretamanhoTela;//documentElement.scrollWidth");
+                    long viewportHeight1 = (long)((IJavaScriptExecutor)DriverDoSelenium).ExecuteScript("return window.innerHeight");// * DobretamanhoTela;//documentElement.scrollWidth");
 
                     int viewportWidth = (int)viewportWidth1;
                     int viewportHeight = (int)viewportHeight1;
@@ -842,7 +898,10 @@ namespace Starline
 
                     // Build the Image
                     stitchedImage = new Bitmap(totalWidth, totalHeight);
+
+                    string[] ArrayImages = new string[1024];
                     // Get all Screenshots and stitch them together
+                    int NumImg = 0;
                     Rectangle previous = Rectangle.Empty;
                     foreach (var rectangle in rectangles)
                     {
@@ -857,15 +916,11 @@ namespace Starline
                             System.Threading.Thread.Sleep(200);
                         }
 
-                        // Take Screenshot
-                        var screenshot = ((ITakesScreenshot)DriverDoSelenium).GetScreenshot();
 
                         // Build an Image out of the Screenshot
-                        Image screenshotImage;
-                        using (MemoryStream memStream = new MemoryStream(screenshot.AsByteArray))
-                        {
-                            screenshotImage = Image.FromStream(memStream);
-                        }
+                        Image screenshotImage = GetImageDoScreeShot(DriverDoSelenium);
+                        ArrayImages[NumImg] = GetImageBase64(screenshotImage);
+
 
                         // Calculate the Source Rectangle
                         Rectangle sourceRectangle = new Rectangle(viewportWidth - rectangle.Width, viewportHeight - rectangle.Height, rectangle.Width, rectangle.Height);
@@ -878,9 +933,12 @@ namespace Starline
 
                         // Set the Previous Rectangle
                         previous = rectangle;
+                        NumImg += 1;
+
                     }
 
-                    stitchedImage.Save(filename, ImageFormat.Png);
+                    //stitchedImage.Save(filename, ImageFormat.Png);
+                    ConcatenarImagens(ArrayImages).Save(filename, ImageFormat.Png);
                 }
                 else
                 {
@@ -898,6 +956,149 @@ namespace Starline
 
         }
 
+        //public void ConcatenaImagem(Image imgFull,Image imgConcatenar,int width,int height)
+        //{
+        //    Graphics g = Graphics.FromImage(imgFull);
+        //    g.DrawImage(imgConcatenar, new Point(width, height));
+        //    //imgFull.Save(@"C:\Users\Carlos Roberto\Source\Repos\nUnitNetcorePrintFull\NUnit_NetCore\marisa\271\ccm\cadastroaposentado\testeprintfulliphone\Img_Full.png",ImageFormat.Png);
+        //}
+
+        //public System.Drawing.Bitmap CombinarImagens(string[] files)
+        //{
+        //    //lê todas as imagens para a memória
+        //    List<System.Drawing.Bitmap> images = new List<System.Drawing.Bitmap>();
+        //    System.Drawing.Bitmap imagemFinal = null;
+
+        //    try
+        //    {
+        //        int width = 0;
+        //        int height = 0;
+
+        //        foreach (string image in files)
+        //        {
+        //            //cria um bitmap a partir do arquivo e o inclui na lista
+        //            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(image);
+
+        //            //atualiza o tamanho da imagem bitmap final
+        //            width = bitmap.Width;//>width?bitmap.Width:width;
+        //            height += bitmap.Height;
+
+        //            images.Add(bitmap);
+        //        }
+
+        //        //cria um bitmap para tratar a imagem combinada
+        //        imagemFinal = new System.Drawing.Bitmap(width, height);
+
+        //        //Obtem o objeto gráfico da imagem 
+        //        using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(imagemFinal))
+        //        {
+        //            //define a cor de fundo
+        //            g.Clear(System.Drawing.Color.White);
+
+        //            //percorre imagem por imagem e gera uma unica imagem final
+        //            int offset = 0;
+        //            foreach (System.Drawing.Bitmap image in images)
+        //            {
+        //                g.DrawImage(image,
+        //                  new System.Drawing.Rectangle(0, offset, image.Width, image.Height));
+        //                offset += image.Height;
+        //            }
+        //        }
+
+        //        return imagemFinal;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (imagemFinal != null)
+        //            imagemFinal.Dispose();
+
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        //limpa a memória
+        //        foreach (System.Drawing.Bitmap image in images)
+        //        {
+        //            image.Dispose();
+        //        }
+        //    }
+        //}
+
+        public System.Drawing.Bitmap ConcatenarImagens(string[] img64bit)
+        {
+            //lê todas as imagens para a memória
+            List<System.Drawing.Bitmap> images = new List<System.Drawing.Bitmap>();
+            System.Drawing.Bitmap imagemFinal = null;
+
+            try
+            {
+                int width = 0;
+                int height = 0;
+
+                foreach (string image in img64bit)
+                {
+                    if (image != null)
+                    {
+                        //cria um bitmap a partir do arquivo e o inclui na lista
+                        System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(Base64ToImage(image));
+
+                        //atualiza o tamanho da imagem bitmap final
+                        width = bitmap.Width;//>width?bitmap.Width:width;
+                        height += bitmap.Height;
+
+                        images.Add(bitmap);
+                    }
+                }
+
+                //cria um bitmap para tratar a imagem combinada
+                imagemFinal = new System.Drawing.Bitmap(width, height);
+
+                //Obtem o objeto gráfico da imagem 
+                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(imagemFinal))
+                {
+                    //define a cor de fundo
+                    g.Clear(System.Drawing.Color.White);
+
+                    //percorre imagem por imagem e gera uma unica imagem final
+                    int offset = 0;
+                    foreach (System.Drawing.Bitmap image in images)
+                    {
+                        g.DrawImage(image,
+                          new System.Drawing.Rectangle(0, offset, image.Width, image.Height));
+                        offset += image.Height;
+                    }
+                }
+
+                return imagemFinal;
+            }
+            catch (Exception ex)
+            {
+                if (imagemFinal != null)
+                    imagemFinal.Dispose();
+
+                throw ex;
+            }
+            finally
+            {
+                //limpa a memória
+                foreach (System.Drawing.Bitmap image in images)
+                {
+                    image.Dispose();
+                }
+            }
+        }
+
+        public Image GetImageDoScreeShot(IWebDriver driver)
+        {
+            var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
+            // Build an Image out of the Screenshot
+            Image image = null;
+            using (MemoryStream memStream = new MemoryStream(screenshot.AsByteArray))
+            {
+                image = Image.FromStream(memStream);
+            }
+            return image;
+        }
 
 
         //////////////////////////////////////////////////////ARQUIVO DE CRIPTOGRAFIA////////////////////////////////////////////////////

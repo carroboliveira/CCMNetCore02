@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CCMNetCore02": {
+      "commandName": "Project",
+      "commandLineArgs": "Ususario,Senha"
+    }
+  }
+}

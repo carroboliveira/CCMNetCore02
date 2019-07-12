@@ -63,7 +63,8 @@ namespace FluxoVendaCartoes
             options.AddArgument("start-maximized");
             options.EnableMobileEmulation("iPhone 5/SE");
             driver = new ChromeDriver(service, options);
-            baseURL = "https://ccmhomolog.marisa.com.br/psfsecurity/paginas/security/login/tela/login.html";
+            //baseURL = "https://ccmhomolog.marisa.com.br/psfsecurity/paginas/security/login/tela/login.html";
+            baseURL= "https://pagseguro.uol.com.br/";
             verificationErrors = new StringBuilder();
 
 
@@ -123,429 +124,498 @@ namespace FluxoVendaCartoes
         [TearDown]
         public void TeardownTest()
         {
+            try
+            {
+                driver.Quit();
+            }
+            catch
+            {
 
+            }
         }
 
-
         [Test]
-        public void CT001_Cadastro_de_Clientes_Aposentados()
+        public void CT001_TST01()
         {
-
             Actions touchActions = new Actions(driver);
 
             processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
             processTest.StepNumber = 1;
             processTest.StepTurn = 1;
-            string filename = processTest.PrintPageComSelenium(driver, false);
 
 
             //Acessar P�gina do CCM
             driver.Navigate().GoToUrl(baseURL);
-
-            //Testando 
-
-            wait(By.XPath("//button[@type='submit']"));
-            wait(By.CssSelector("img.png_bg"));
-            //print.PrintScreen();
-            processTest.StepTurn = 2;
             processTest.PrintPageComSelenium(driver, false);
-
-            try
-            {
-                NUnit.Framework.Assert.AreEqual("Login", driver.FindElement(By.CssSelector("strong")).Text);
-            }
-            catch (AssertionException e)
-            {
-                verificationErrors.Append(e.Message);
-            }
-            NUnit.Framework.Assert.IsTrue(IsElementPresent(By.Id("login_username")));
-            NUnit.Framework.Assert.IsTrue(IsElementPresent(By.Id("login_password")));
-            NUnit.Framework.Assert.IsTrue(IsElementPresent(By.XPath("//button[@type='submit']")));
-
-
-
-            //Validar Tela de Login
-            NUnit.Framework.Assert.AreEqual("PSF Security", driver.Title);
-            NUnit.Framework.Assert.IsTrue(IsElementPresent(By.CssSelector("img.png_bg")));
-            try
-            {
-                NUnit.Framework.Assert.AreEqual("Portal Lojas", driver.FindElement(By.Id("tituloPagina")).Text);
-            }
-            catch (AssertionException e)
-            {
-                verificationErrors.Append(e.Message);
-            }
-
-            processTest.StepTurn = 3;
-            processTest.PrintPageComSelenium(driver, false);
-
-            //Realizar login
-            Login();
-
-
-            wait(By.Id("btnSearch"));
-            processTest.StepTurn = 4;
-            processTest.PrintPageComSelenium(driver, false);
-
-
-            ////Alterar Filial
-            Thread.Sleep(2000);
-
-            driver.FindElement(By.Id("btnYesOk")).Click();
-            Thread.Sleep(2000);
-
-            driver.FindElement(By.Id("labelFilial")).Click();
-            Thread.Sleep(2000);
-
-            new SelectElement(driver.FindElement(By.Id("changeFilial"))).SelectByValue("54");
-            driver.FindElement(By.Id("changeFilial")).SendKeys(OpenQA.Selenium.Keys.Tab);
-            driver.FindElement(By.XPath("//div[2]/div/div/div[3]/button")).Click();
-
-            Thread.Sleep(5000);
 
             //Validar P�gina Inicial
-            Assert.AreEqual("PSF Security", driver.Title);
-
-            try
-            {
-                Assert.AreEqual("Buscar_pornCPFnCARTAO", processTest.Slugify(driver.FindElement(By.Id("tipoSearch")).Text));
-            }
-            catch (AssertionException e)
-            {
-                verificationErrors.Append(e.Message);
-            }
-            Assert.IsTrue(IsElementPresent(By.Id("cpfSearch")));
-            Assert.IsTrue(IsElementPresent(By.Id("btnSearch")));
-            try
-            {
-                Assert.AreEqual("Concessao do Cartao", driver.FindElement(By.Id("menuCollapse3162")).Text);
-            }
-            catch (AssertionException e)
-            {
-                verificationErrors.Append(e.Message);
-            }
-            try
-            {
-                Assert.AreEqual("Atendimento", driver.FindElement(By.Id("menuCollapse3164")).Text);
-            }
-            catch (AssertionException e)
-            {
-                verificationErrors.Append(e.Message);
-            }
-
-
-            //Cenario 1 - Cadastro de Clientes
-
-            //Consultar Cliente
-            driver.FindElement(By.Id("cpfSearch")).Clear();
-            driver.FindElement(By.Id("cpfSearch")).SendKeys("5339718379");
-            Thread.Sleep(2000);
-            processTest.StepTurn = 5;
-            processTest.PrintPageComSelenium(driver, false);
-            driver.FindElement(By.Id("btnSearch")).Click();
-            Thread.Sleep(2000);
-
-
-            wait(By.Id("iniciarCadastro"));
-
-
-            //Validar P�gina Cadastro de Clientes
-
-
-            Assert.IsTrue(IsElementPresent(By.Id("formPreCadastro")));
-
-            driver.FindElement(By.Id("dataNascCad")).Click();
-            driver.FindElement(By.Id("dataNascCad")).SendKeys("10/06/1992");
-            driver.FindElement(By.Id("iniciarCadastro")).Click();
-
-
-            //Validar Mensagem de Retorno CPF
-
-            Thread.Sleep(8000);
-
-
-            wait(By.Id("avancarDadosPessoais"));
-
-            //Cenario 2  -- Dados pessoais
-
-
-            //Validar P�gina Cadastro de Clientes
-
-
-            Assert.IsTrue(IsElementPresent(By.Id("formDadosPessoais")));
-
-
-            ////Nome da M�e
-            //Thread.Sleep(2000);
-            //driver.FindElement(By.Id("nomeMaeDadosPessoais")).Click();
-            //driver.FindElement(By.Id("nomeMaeDadosPessoais")).Clear();
-            //Thread.Sleep(2000);
-            //driver.FindElement(By.Id("nomeMaeDadosPessoais")).SendKeys("Maria Aparecida");
-
-
-            //Estado Civil
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("estadoCivil")).Click();
-            Thread.Sleep(2000);
-            //new SelectElement(driver.FindElement(By.Id("estadoCivil"))).SelectByValue(Cadastro.EstadoCivil);
-            driver.FindElement(By.Id("estadoCivil")).SendKeys("CASADO" + OpenQA.Selenium.Keys.Enter);// PEGAR DO BANCO
-
-
-
-            //Sexo       
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("sexoDadosPessoais")).Click();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("sexoDadosPessoais")).SendKeys("MASCULINO" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
-
-
-            //Deseja Receber a Fatura por email?         
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("faturaEmailOutros")).Click();
-            driver.FindElement(By.Id("faturaEmailOutros")).SendKeys("N�o"); // PEGAR DO BANCO //
-
-
-            //Email
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("cliEmail")).Click();
-            driver.FindElement(By.Id("cliEmail")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("cliEmail")).SendKeys("starline@starline.com.br");//PEGAR NO BANCO
-
-            Thread.Sleep(2000);
-
-            processTest.StepTurn = 6;
-            processTest.PrintPageComSelenium(driver, false);
-
-            //Bot�o avan�ar
-            driver.FindElement(By.Id("avancarDadosPessoais")).Click();
-
-            //Cenario 3 -- Dados Residenciais 
-
-            //Validar P�gina Dados Residenciais
-
-            wait(By.Id("avancarDadosResidenciais"));
-
-
-            Assert.IsTrue(IsElementPresent(By.Id("formDadosResidenciais")));
-
-
-            //Cep
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("cepDadosResidenciais")).Click();
-            driver.FindElement(By.Id("cepDadosResidenciais")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("cepDadosResidenciais")).SendKeys("06033080" + OpenQA.Selenium.Keys.Tab);
-
-
-
-            //Numero
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("numeroDadosResidenciais")).Click();
-            driver.FindElement(By.Id("numeroDadosResidenciais")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("numeroDadosResidenciais")).SendKeys("1010");
-
-            //Tipo Residencia
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("tipoResidencia")).Click();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("tipoResidencia")).SendKeys("ALUGADA" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
-
-
-            //Telefone Residencia
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("telefoneResidencialDadosResidenciais")).Click();
-            driver.FindElement(By.Id("telefoneResidencialDadosResidenciais")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("telefoneResidencialDadosResidenciais")).SendKeys("1135926538" + OpenQA.Selenium.Keys.Tab);
-            Thread.Sleep(2000);
-
-
-            processTest.StepTurn = 7;
-            processTest.PrintPageComSelenium(driver, false);
-
-            //Bot�o avan�ar
-
-            driver.FindElement(By.Id("avancarDadosResidenciais")).Click();
-
-            //Cenario 4 -- Dados Comerciais 
-
-            //Validar P�gina Dados Comerciais
-
-            wait(By.Id("avancarDadosComerciais"));
-
-
-            Assert.IsTrue(IsElementPresent(By.Id("formDadosComerciais")));
-
-
-            //Classe Profissisional
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("classeProfDadosComerciais")).Click();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("classeProfDadosComerciais")).SendKeys("Aposentados" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
-
-
-            //Atividade
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("atividadeDadosComerciais")).Click();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("atividadeDadosComerciais")).SendKeys("Aposentados" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
-
-
-            //Renda Mensal
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("rendaMensalDadosComerciais")).Click();
-            driver.FindElement(By.Id("rendaMensalDadosComerciais")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("rendaMensalDadosComerciais")).SendKeys("10000");
-
-
-            ////Tempo de Empresa (ANO)
-            //Thread.Sleep(2000);
-            //driver.FindElement(By.Id("tempoEmpresaAnoDadosComerciais")).Click();
-            //driver.FindElement(By.Id("tempoEmpresaAnoDadosComerciais")).Clear();
-            //Thread.Sleep(2000);
-            //driver.FindElement(By.Id("tempoEmpresaAnoDadosComerciais")).SendKeys("10");
-
-
-
-            ////Tempo de Empresa (MES)
-            //Thread.Sleep(2000);
-            //driver.FindElement(By.Id("tempoEmpresaMes")).Click();
-            //driver.FindElement(By.Id("tempoEmpresaMes")).Clear();
-            //Thread.Sleep(2000);
-            //driver.FindElement(By.Id("tempoEmpresaMes")).SendKeys("10");
-
-
-            //CEP
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("cepDadosComerciais")).Click();
-            driver.FindElement(By.Id("cepDadosComerciais")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("cepDadosComerciais")).SendKeys("06033050");
-
-            //Numero
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("numeroDadosComerciais")).Click();
-            driver.FindElement(By.Id("numeroDadosComerciais")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("numeroDadosComerciais")).Click();
-            driver.FindElement(By.Id("numeroDadosComerciais")).SendKeys("11");
-
-
-            //Telefone Comercial
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("telefoneComercialDadosComercial")).Click();
-            driver.FindElement(By.Id("telefoneComercialDadosComercial")).Clear();
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("telefoneComercialDadosComercial")).Click();
-            driver.FindElement(By.Id("telefoneComercialDadosComercial")).SendKeys("1136811452" + OpenQA.Selenium.Keys.Tab);
-            Thread.Sleep(2000);
-
-            //Bot�o avan�ar
-
-            driver.FindElement(By.Id("avancarDadosComerciais")).Click();
-
-            //Cenario 5 -- Outros 
-
-            //Validar P�gina Outros
-
-            wait(By.Id("avancarOutros"));
-
-
-            Assert.IsTrue(IsElementPresent(By.Id("formOutros")));
-
-            //Vencimento Melhor Dia
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("vencimentoOutros")).Click();
-            driver.FindElement(By.Id("vencimentoOutros")).SendKeys("10");
-            Thread.Sleep(2000);
-
-            //Confirma��o de Vencimento
-            driver.FindElement(By.XPath("(//div[@id='modalContent']/div[3]/button)[3]")).Click();
-
-            wait(By.CssSelector("#tarifaOverlimitOutros"));
-
-            //Cobrar tarifa de overlimit
-            driver.FindElement(By.CssSelector("#tarifaOverlimitOutros")).Click();
-            driver.FindElement(By.CssSelector("#tarifaOverlimitOutros")).SendKeys("N�o");
-
-            //Conta B�nus?
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("tipoCartaoOutros")).Click();
-            driver.FindElement(By.Id("tipoCartaoOutros")).SendKeys("N�o");
-
-
-            //Campanha
-            Thread.Sleep(2000);
-            driver.FindElement(By.Id("campanhaOutros")).Click();
-            driver.FindElement(By.Id("campanhaOutros")).SendKeys("931 - Desc Primeira Compra Marisa Itaucard 10%");
-            Thread.Sleep(2000);
-
-
-            //Bot�o avan�ar
-            touchActions = new Actions(driver);
-            touchActions.Click(driver.FindElement(By.Id("avancarOutros")));
-            touchActions.Build();
-            touchActions.Perform();
-
-            //Cenario 6 -- Camera 
-
-            //Validar P�gina Outros
-
-            wait(By.Id("avancarBiometriaFacial"));
-
-            //driver.FindElement(By.Id("avancarBiometriaFacial")).Click();
-
-            touchActions = new Actions(driver);
-            touchActions.Click(driver.FindElement(By.Id("avancarBiometriaFacial")));
-            touchActions.Build();
-            touchActions.Perform();
-
-            driver.SwitchTo().ParentFrame();
-            driver.SwitchTo().Frame("assinaturaEletronica");
-            wait(By.XPath("/html/body/form/footer/input"));
-            touchActions = new Actions(driver);
-            touchActions.Click(driver.FindElement(By.XPath("/html/body/form/footer/input")));
-            touchActions.Build();
-            touchActions.Perform();
-
-
-            //anexar imagem
-            driver.SwitchTo().ParentFrame();
-            driver.SwitchTo().Frame("assinaturaEletronica");
-            driver.FindElement(By.Id("photo_37")).SendKeys(@"C:\Users\Rafael Leal\Pictures\teste.jpg");
-
-            Thread.Sleep(20000);
-
-            driver.SwitchTo().ParentFrame();
-            driver.SwitchTo().Frame("assinaturaEletronica");
-            touchActions = new Actions(driver);
-            touchActions.DragAndDrop(driver.FindElement(By.Id("imgOrientation")), driver.FindElement(By.Id("signatureLine")));
-            touchActions.Build();
-            touchActions.Perform();
-            processTest.StepTurn = 8;
-            processTest.PrintPageComSelenium(driver, false);
-
-
-            //Aceitar a assinatura
-            driver.FindElement(By.Id("btnSave")).Click();
-            Thread.Sleep(2000);
-
-            wait(By.CssSelector("btnInicioCadastro"));
-
-            //Resultado.
-            driver.FindElement(By.Id("btnInicioCadastro")).Click();
-
-            processTest.StepTurn = 9;
-            processTest.PrintPageComSelenium(driver, false);
-
-
-
-            driver.Quit();
+            Assert.AreEqual("PagSeguro: Venda muito pelas máquinas de cartão ou pela internet", driver.Title);
 
         }
+        [Test]
+        public void CT001_TST02()
+        {
+            Actions touchActions = new Actions(driver);
+
+            processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            processTest.StepNumber = 1;
+            processTest.StepTurn = 2;
+
+
+            //Acessar P�gina do CCM
+            driver.Navigate().GoToUrl(baseURL);
+            driver.FindElement(By.XPath("//*[@id='ps']/div[1]/section/div/div[4]/p/a[2]")).Click();
+            processTest.PrintPageComSelenium(driver, false);
+
+            //Validar P�gina Inicial
+            Assert.AreEqual("Prévia da", driver.FindElement(By.XPath("//*[@id='localnav']/div/div[2]/div[1]/span")));
+
+        }
+
+        [Test]
+        public void CT001_TST03()
+        {
+            Actions touchActions = new Actions(driver);
+
+            processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            processTest.StepNumber = 1;
+            processTest.StepTurn = 3;
+
+
+            //Acessar P�gina do CCM
+            driver.Navigate().GoToUrl(baseURL);
+            driver.FindElement(By.XPath("//*[@id='ps']/div[1]/section/div/div[4]/p/a[2]")).Click();
+            processTest.PrintPageComSelenium(driver, false);
+
+            //Validar P�gina Inicial
+            Assert.AreEqual("Préviaa", driver.FindElement(By.XPath("//*[@id='localnav']/div/div[2]/div[1]/span")));
+
+        }
+
+        //[Test]
+        //public void CT001_Cadastro_de_Clientes_Aposentados()
+        //{
+
+        //    Actions touchActions = new Actions(driver);
+
+        //    processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+        //    processTest.StepNumber = 1;
+        //    processTest.StepTurn = 1;
+
+
+        //    //Acessar P�gina do CCM
+        //    driver.Navigate().GoToUrl(baseURL);
+        //    processTest.PrintPageComSelenium(driver, false);
+
+        //    //Validar P�gina Inicial
+        //    Assert.AreEqual("PagSeguro: Venda muito pelas máquinas de cartão ou pela internet", driver.Title);
+
+
+
+        //Testando 
+
+        //wait(By.XPath("//button[@type='submit']"));
+        //wait(By.CssSelector("img.png_bg"));
+        ////print.PrintScreen();
+        //processTest.StepTurn = 2;
+        //processTest.PrintPageComSelenium(driver, false);
+
+        //try
+        //{
+        //    NUnit.Framework.Assert.AreEqual("Login", driver.FindElement(By.CssSelector("strong")).Text);
+        //}
+        //catch (AssertionException e)
+        //{
+        //    verificationErrors.Append(e.Message);
+        //}
+        //NUnit.Framework.Assert.IsTrue(IsElementPresent(By.Id("login_username")));
+        //NUnit.Framework.Assert.IsTrue(IsElementPresent(By.Id("login_password")));
+        //NUnit.Framework.Assert.IsTrue(IsElementPresent(By.XPath("//button[@type='submit']")));
+
+
+
+        ////Validar Tela de Login
+        //NUnit.Framework.Assert.AreEqual("PSF Security", driver.Title);
+        //NUnit.Framework.Assert.IsTrue(IsElementPresent(By.CssSelector("img.png_bg")));
+        //try
+        //{
+        //    NUnit.Framework.Assert.AreEqual("Portal Lojas", driver.FindElement(By.Id("tituloPagina")).Text);
+        //}
+        //catch (AssertionException e)
+        //{
+        //    verificationErrors.Append(e.Message);
+        //}
+
+        //processTest.StepTurn = 3;
+        //processTest.PrintPageComSelenium(driver, false);
+
+        ////Realizar login
+        //Login();
+
+
+        //wait(By.Id("btnSearch"));
+        //processTest.StepTurn = 4;
+        //processTest.PrintPageComSelenium(driver, false);
+
+
+        //////Alterar Filial
+        //Thread.Sleep(2000);
+
+        //driver.FindElement(By.Id("btnYesOk")).Click();
+        //Thread.Sleep(2000);
+
+        //driver.FindElement(By.Id("labelFilial")).Click();
+        //Thread.Sleep(2000);
+
+        //new SelectElement(driver.FindElement(By.Id("changeFilial"))).SelectByValue("54");
+        //driver.FindElement(By.Id("changeFilial")).SendKeys(OpenQA.Selenium.Keys.Tab);
+        //driver.FindElement(By.XPath("//div[2]/div/div/div[3]/button")).Click();
+
+        //Thread.Sleep(5000);
+
+        ////Validar P�gina Inicial
+        //Assert.AreEqual("PSF Security", driver.Title);
+
+        //try
+        //{
+        //    Assert.AreEqual("Buscar_pornCPFnCARTAO", processTest.Slugify(driver.FindElement(By.Id("tipoSearch")).Text));
+        //}
+        //catch (AssertionException e)
+        //{
+        //    verificationErrors.Append(e.Message);
+        //}
+        //Assert.IsTrue(IsElementPresent(By.Id("cpfSearch")));
+        //Assert.IsTrue(IsElementPresent(By.Id("btnSearch")));
+        //try
+        //{
+        //    Assert.AreEqual("Concessao do Cartao", driver.FindElement(By.Id("menuCollapse3162")).Text);
+        //}
+        //catch (AssertionException e)
+        //{
+        //    verificationErrors.Append(e.Message);
+        //}
+        //try
+        //{
+        //    Assert.AreEqual("Atendimento", driver.FindElement(By.Id("menuCollapse3164")).Text);
+        //}
+        //catch (AssertionException e)
+        //{
+        //    verificationErrors.Append(e.Message);
+        //}
+
+
+        ////Cenario 1 - Cadastro de Clientes
+
+        ////Consultar Cliente
+        //driver.FindElement(By.Id("cpfSearch")).Clear();
+        //driver.FindElement(By.Id("cpfSearch")).SendKeys("5339718379");
+        //Thread.Sleep(2000);
+        //processTest.StepTurn = 5;
+        //processTest.PrintPageComSelenium(driver, false);
+        //driver.FindElement(By.Id("btnSearch")).Click();
+        //Thread.Sleep(2000);
+
+
+        //wait(By.Id("iniciarCadastro"));
+
+
+        ////Validar P�gina Cadastro de Clientes
+
+
+        //Assert.IsTrue(IsElementPresent(By.Id("formPreCadastro")));
+
+        //driver.FindElement(By.Id("dataNascCad")).Click();
+        //driver.FindElement(By.Id("dataNascCad")).SendKeys("10/06/1992");
+        //driver.FindElement(By.Id("iniciarCadastro")).Click();
+
+
+        ////Validar Mensagem de Retorno CPF
+
+        //Thread.Sleep(8000);
+
+
+        //wait(By.Id("avancarDadosPessoais"));
+
+        ////Cenario 2  -- Dados pessoais
+
+
+        ////Validar P�gina Cadastro de Clientes
+
+
+        //Assert.IsTrue(IsElementPresent(By.Id("formDadosPessoais")));
+
+
+        //////Nome da M�e
+        ////Thread.Sleep(2000);
+        ////driver.FindElement(By.Id("nomeMaeDadosPessoais")).Click();
+        ////driver.FindElement(By.Id("nomeMaeDadosPessoais")).Clear();
+        ////Thread.Sleep(2000);
+        ////driver.FindElement(By.Id("nomeMaeDadosPessoais")).SendKeys("Maria Aparecida");
+
+
+        ////Estado Civil
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("estadoCivil")).Click();
+        //Thread.Sleep(2000);
+        ////new SelectElement(driver.FindElement(By.Id("estadoCivil"))).SelectByValue(Cadastro.EstadoCivil);
+        //driver.FindElement(By.Id("estadoCivil")).SendKeys("CASADO" + OpenQA.Selenium.Keys.Enter);// PEGAR DO BANCO
+
+
+
+        ////Sexo       
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("sexoDadosPessoais")).Click();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("sexoDadosPessoais")).SendKeys("MASCULINO" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
+
+
+        ////Deseja Receber a Fatura por email?         
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("faturaEmailOutros")).Click();
+        //driver.FindElement(By.Id("faturaEmailOutros")).SendKeys("N�o"); // PEGAR DO BANCO //
+
+
+        ////Email
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("cliEmail")).Click();
+        //driver.FindElement(By.Id("cliEmail")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("cliEmail")).SendKeys("starline@starline.com.br");//PEGAR NO BANCO
+
+        //Thread.Sleep(2000);
+
+        //processTest.StepTurn = 6;
+        //processTest.PrintPageComSelenium(driver, false);
+
+        ////Bot�o avan�ar
+        //driver.FindElement(By.Id("avancarDadosPessoais")).Click();
+
+        ////Cenario 3 -- Dados Residenciais 
+
+        ////Validar P�gina Dados Residenciais
+
+        //wait(By.Id("avancarDadosResidenciais"));
+
+
+        //Assert.IsTrue(IsElementPresent(By.Id("formDadosResidenciais")));
+
+
+        ////Cep
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("cepDadosResidenciais")).Click();
+        //driver.FindElement(By.Id("cepDadosResidenciais")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("cepDadosResidenciais")).SendKeys("06033080" + OpenQA.Selenium.Keys.Tab);
+
+
+
+        ////Numero
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("numeroDadosResidenciais")).Click();
+        //driver.FindElement(By.Id("numeroDadosResidenciais")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("numeroDadosResidenciais")).SendKeys("1010");
+
+        ////Tipo Residencia
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("tipoResidencia")).Click();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("tipoResidencia")).SendKeys("ALUGADA" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
+
+
+        ////Telefone Residencia
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("telefoneResidencialDadosResidenciais")).Click();
+        //driver.FindElement(By.Id("telefoneResidencialDadosResidenciais")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("telefoneResidencialDadosResidenciais")).SendKeys("1135926538" + OpenQA.Selenium.Keys.Tab);
+        //Thread.Sleep(2000);
+
+
+        //processTest.StepTurn = 7;
+        //processTest.PrintPageComSelenium(driver, false);
+
+        ////Bot�o avan�ar
+
+        //driver.FindElement(By.Id("avancarDadosResidenciais")).Click();
+
+        ////Cenario 4 -- Dados Comerciais 
+
+        ////Validar P�gina Dados Comerciais
+
+        //wait(By.Id("avancarDadosComerciais"));
+
+
+        //Assert.IsTrue(IsElementPresent(By.Id("formDadosComerciais")));
+
+
+        ////Classe Profissisional
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("classeProfDadosComerciais")).Click();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("classeProfDadosComerciais")).SendKeys("Aposentados" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
+
+
+        ////Atividade
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("atividadeDadosComerciais")).Click();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("atividadeDadosComerciais")).SendKeys("Aposentados" + OpenQA.Selenium.Keys.Enter); // PEGAR DO BANCO
+
+
+        ////Renda Mensal
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("rendaMensalDadosComerciais")).Click();
+        //driver.FindElement(By.Id("rendaMensalDadosComerciais")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("rendaMensalDadosComerciais")).SendKeys("10000");
+
+
+        //////Tempo de Empresa (ANO)
+        ////Thread.Sleep(2000);
+        ////driver.FindElement(By.Id("tempoEmpresaAnoDadosComerciais")).Click();
+        ////driver.FindElement(By.Id("tempoEmpresaAnoDadosComerciais")).Clear();
+        ////Thread.Sleep(2000);
+        ////driver.FindElement(By.Id("tempoEmpresaAnoDadosComerciais")).SendKeys("10");
+
+
+
+        //////Tempo de Empresa (MES)
+        ////Thread.Sleep(2000);
+        ////driver.FindElement(By.Id("tempoEmpresaMes")).Click();
+        ////driver.FindElement(By.Id("tempoEmpresaMes")).Clear();
+        ////Thread.Sleep(2000);
+        ////driver.FindElement(By.Id("tempoEmpresaMes")).SendKeys("10");
+
+
+        ////CEP
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("cepDadosComerciais")).Click();
+        //driver.FindElement(By.Id("cepDadosComerciais")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("cepDadosComerciais")).SendKeys("06033050");
+
+        ////Numero
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("numeroDadosComerciais")).Click();
+        //driver.FindElement(By.Id("numeroDadosComerciais")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("numeroDadosComerciais")).Click();
+        //driver.FindElement(By.Id("numeroDadosComerciais")).SendKeys("11");
+
+
+        ////Telefone Comercial
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("telefoneComercialDadosComercial")).Click();
+        //driver.FindElement(By.Id("telefoneComercialDadosComercial")).Clear();
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("telefoneComercialDadosComercial")).Click();
+        //driver.FindElement(By.Id("telefoneComercialDadosComercial")).SendKeys("1136811452" + OpenQA.Selenium.Keys.Tab);
+        //Thread.Sleep(2000);
+
+        ////Bot�o avan�ar
+
+        //driver.FindElement(By.Id("avancarDadosComerciais")).Click();
+
+        ////Cenario 5 -- Outros 
+
+        ////Validar P�gina Outros
+
+        //wait(By.Id("avancarOutros"));
+
+
+        //Assert.IsTrue(IsElementPresent(By.Id("formOutros")));
+
+        ////Vencimento Melhor Dia
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("vencimentoOutros")).Click();
+        //driver.FindElement(By.Id("vencimentoOutros")).SendKeys("10");
+        //Thread.Sleep(2000);
+
+        ////Confirma��o de Vencimento
+        //driver.FindElement(By.XPath("(//div[@id='modalContent']/div[3]/button)[3]")).Click();
+
+        //wait(By.CssSelector("#tarifaOverlimitOutros"));
+
+        ////Cobrar tarifa de overlimit
+        //driver.FindElement(By.CssSelector("#tarifaOverlimitOutros")).Click();
+        //driver.FindElement(By.CssSelector("#tarifaOverlimitOutros")).SendKeys("N�o");
+
+        ////Conta B�nus?
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("tipoCartaoOutros")).Click();
+        //driver.FindElement(By.Id("tipoCartaoOutros")).SendKeys("N�o");
+
+
+        ////Campanha
+        //Thread.Sleep(2000);
+        //driver.FindElement(By.Id("campanhaOutros")).Click();
+        //driver.FindElement(By.Id("campanhaOutros")).SendKeys("931 - Desc Primeira Compra Marisa Itaucard 10%");
+        //Thread.Sleep(2000);
+
+
+        ////Bot�o avan�ar
+        //touchActions = new Actions(driver);
+        //touchActions.Click(driver.FindElement(By.Id("avancarOutros")));
+        //touchActions.Build();
+        //touchActions.Perform();
+
+        ////Cenario 6 -- Camera 
+
+        ////Validar P�gina Outros
+
+        //wait(By.Id("avancarBiometriaFacial"));
+
+        ////driver.FindElement(By.Id("avancarBiometriaFacial")).Click();
+
+        //touchActions = new Actions(driver);
+        //touchActions.Click(driver.FindElement(By.Id("avancarBiometriaFacial")));
+        //touchActions.Build();
+        //touchActions.Perform();
+
+        //driver.SwitchTo().ParentFrame();
+        //driver.SwitchTo().Frame("assinaturaEletronica");
+        //wait(By.XPath("/html/body/form/footer/input"));
+        //touchActions = new Actions(driver);
+        //touchActions.Click(driver.FindElement(By.XPath("/html/body/form/footer/input")));
+        //touchActions.Build();
+        //touchActions.Perform();
+
+
+        ////anexar imagem
+        //driver.SwitchTo().ParentFrame();
+        //driver.SwitchTo().Frame("assinaturaEletronica");
+        //driver.FindElement(By.Id("photo_37")).SendKeys(@"C:\Users\Rafael Leal\Pictures\teste.jpg");
+
+        //Thread.Sleep(20000);
+
+        //driver.SwitchTo().ParentFrame();
+        //driver.SwitchTo().Frame("assinaturaEletronica");
+        //touchActions = new Actions(driver);
+        //touchActions.DragAndDrop(driver.FindElement(By.Id("imgOrientation")), driver.FindElement(By.Id("signatureLine")));
+        //touchActions.Build();
+        //touchActions.Perform();
+        //processTest.StepTurn = 8;
+        //processTest.PrintPageComSelenium(driver, false);
+
+
+        ////Aceitar a assinatura
+        //driver.FindElement(By.Id("btnSave")).Click();
+        //Thread.Sleep(2000);
+
+        //wait(By.CssSelector("btnInicioCadastro"));
+
+        ////Resultado.
+        //driver.FindElement(By.Id("btnInicioCadastro")).Click();
+
+        //processTest.StepTurn = 9;
+        //processTest.PrintPageComSelenium(driver, false);
+
+
+
+        //driver.Quit();
+
+        //}
 
 
 
