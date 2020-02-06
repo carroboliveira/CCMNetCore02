@@ -8,10 +8,7 @@ using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Starline;
 using OpenQA.Selenium.Interactions;
-
-
-
-
+using OpenQA.Selenium.IE;
 
 namespace FluxoVendaCartoes
 {
@@ -35,36 +32,46 @@ namespace FluxoVendaCartoes
         {
 
             processTest = new ProcessTest();
-            var options = new ChromeOptions();
+            var options = new InternetExplorerOptions();
+
             var os = Environment.OSVersion;
             OSLinux = os.Platform == PlatformID.Unix;
-            ChromeDriverService service = null;
+            InternetExplorerDriverService service = null;
             if (OSLinux)
             {
                 PathChromeDriver = "/usr/bin/";
-                service = ChromeDriverService.CreateDefaultService(PathChromeDriver, "chromedriver");
+                service = InternetExplorerDriverService.CreateDefaultService(PathChromeDriver, "IEDriverServer");
             }
             else
             {
-                PathChromeDriver = @"C:\Mp4-Marisa\CCM_DotNet\CCMNetCore\CCMNetCore02\CCMNetCore02\bin\Debug\netcoreapp2.1";
-                service = ChromeDriverService.CreateDefaultService(PathChromeDriver, "chromedriver.exe");
+                //PathChromeDriver = @"C:\Mp4-Marisa\CCM_DotNet\CCMNetCore\CCMNetCore02\CCMNetCore02\bin\Debug\netcoreapp2.1";
+                //service = ChromeDriverService.CreateDefaultService(PathChromeDriver, "chromedriver.exe");
+
+
+                PathChromeDriver = @"C:\Projetos\CCMNetCore02\CCMNetCore02\bin\Debug\netcoreapp2.1";
+                service = InternetExplorerDriverService.CreateDefaultService(PathChromeDriver, "IEDriverServer.exe");
+                //IWebDriver driver = new InternetExplorerDriver(@"C:\Projetos\CCMNetCore02\CCMNetCore02\bin\Debug\netcoreapp2.1\IEDriverServer.exe");
+                //driver.Navigate().GoToUrl("http://www.google.com");
             }
 
 
-            processTest.CustomerName = "marisa"; //CustomerName evitar Acentuacao e espa�o
-            processTest.SuiteName = "ccm"; //CustomerName evitar Acentuacao e espa�o
-            processTest.ScenarioName = "cadastroaposentado";
-            processTest.ReportID = 271;
+            //processTest.CustomerName = "marisa"; //CustomerName evitar Acentuacao e espa�o
+            //processTest.SuiteName = "ccm"; //CustomerName evitar Acentuacao e espa�o
+            //processTest.ScenarioName = "cadastroaposentado";
+            //processTest.ReportID = 271;
 
-            //options.AddArgument("--headless");            
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
-            options.AddArgument("--touch-events=enabled");
-            options.AddArgument("start-maximized");
-            options.EnableMobileEmulation("iPhone 5/SE");
-            driver = new ChromeDriver(service, options);
+            //options.AddArgument("--headless");   
+            
+            //options.AddArgument("--no-sandbox");
+            //options.AddArgument("--disable-dev-shm-usage");
+            //options.AddArgument("--touch-events=enabled");
+            //options.AddArgument("start-maximized");
+            //options.EnableMobileEmulation("iPhone 5/SE");
+//            driver = new ChromeDriver(service, options);
+            driver = new InternetExplorerDriver(service, options);
+
             //baseURL = "https://ccmhomolog.marisa.com.br/psfsecurity/paginas/security/login/tela/login.html";
-            baseURL= "https://pagseguro.uol.com.br/";
+            baseURL = "https://pagseguro.uol.com.br/";
             verificationErrors = new StringBuilder();
 
 
@@ -103,23 +110,23 @@ namespace FluxoVendaCartoes
 
 
 
-        public void Login()
-        { //Validar Se��o de Login
+        //public void Login()
+        //{ //Validar Se��o de Login
 
 
 
-            //Efetuar Login
-            driver.FindElement(By.Id("login_username")).Clear();
-            driver.FindElement(By.Id("login_username")).SendKeys(login);
-            driver.FindElement(By.Id("login_password")).Clear();
-            driver.FindElement(By.Id("login_password")).SendKeys(senha);
-            Thread.Sleep(2000);
-            driver.FindElement(By.XPath("//button[@type='submit']")).Click();
-            Thread.Sleep(2000);
+        //    //Efetuar Login
+        //    driver.FindElement(By.Id("login_username")).Clear();
+        //    driver.FindElement(By.Id("login_username")).SendKeys(login);
+        //    driver.FindElement(By.Id("login_password")).Clear();
+        //    driver.FindElement(By.Id("login_password")).SendKeys(senha);
+        //    Thread.Sleep(2000);
+        //    driver.FindElement(By.XPath("//button[@type='submit']")).Click();
+        //    Thread.Sleep(2000);
 
-            wait(By.Id("text-login-msg"));
+        //    wait(By.Id("text-login-msg"));
 
-        }
+        //}
 
         [TearDown]
         public void TeardownTest()
@@ -137,60 +144,61 @@ namespace FluxoVendaCartoes
         [Test]
         public void CT001_TST01()
         {
-            Actions touchActions = new Actions(driver);
+            //Actions touchActions = new Actions(driver);
 
-            processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
-            processTest.StepNumber = 1;
-            processTest.StepTurn = 1;
+            //processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+            //processTest.StepNumber = 1;
+            //processTest.StepTurn = 1;
 
 
             //Acessar P�gina do CCM
+            driver.Manage().Window.Minimize();
             driver.Navigate().GoToUrl(baseURL);
-            processTest.PrintPageComSelenium(driver, false);
+            //processTest.PrintPageComSelenium(driver, false);
 
             //Validar P�gina Inicial
             Assert.AreEqual("PagSeguro: Venda muito pelas máquinas de cartão ou pela internet", driver.Title);
 
         }
-        [Test]
-        public void CT001_TST02()
-        {
-            Actions touchActions = new Actions(driver);
+        //[Test]
+        //public void CT001_TST02()
+        //{
+        //    Actions touchActions = new Actions(driver);
 
-            processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
-            processTest.StepNumber = 1;
-            processTest.StepTurn = 2;
-
-
-            //Acessar P�gina do CCM
-            driver.Navigate().GoToUrl(baseURL);
-            driver.FindElement(By.XPath("//*[@id='ps']/div[1]/section/div/div[4]/p/a[2]")).Click();
-            processTest.PrintPageComSelenium(driver, false);
-
-            //Validar P�gina Inicial
-            Assert.AreEqual("Prévia da", driver.FindElement(By.XPath("//*[@id='localnav']/div/div[2]/div[1]/span")));
-
-        }
-
-        [Test]
-        public void CT001_TST03()
-        {
-            Actions touchActions = new Actions(driver);
-
-            processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
-            processTest.StepNumber = 1;
-            processTest.StepTurn = 3;
+        //    processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+        //    processTest.StepNumber = 1;
+        //    processTest.StepTurn = 2;
 
 
-            //Acessar P�gina do CCM
-            driver.Navigate().GoToUrl(baseURL);
-            driver.FindElement(By.XPath("//*[@id='ps']/div[1]/section/div/div[4]/p/a[2]")).Click();
-            processTest.PrintPageComSelenium(driver, false);
+        //    //Acessar P�gina do CCM
+        //    driver.Navigate().GoToUrl(baseURL);
+        //    driver.FindElement(By.XPath("//*[@id='ps']/div[1]/section/div/div[4]/p/a[2]")).Click();
+        //    processTest.PrintPageComSelenium(driver, false);
 
-            //Validar P�gina Inicial
-            Assert.AreEqual("Préviaa", driver.FindElement(By.XPath("//*[@id='localnav']/div/div[2]/div[1]/span")));
+        //    //Validar P�gina Inicial
+        //    Assert.AreEqual("Prévia da", driver.FindElement(By.XPath("//*[@id='localnav']/div/div[2]/div[1]/span")));
 
-        }
+        //}
+
+        //[Test]
+        //public void CT001_TST03()
+        //{
+        //    Actions touchActions = new Actions(driver);
+
+        //    processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+        //    processTest.StepNumber = 1;
+        //    processTest.StepTurn = 3;
+
+
+        //    //Acessar P�gina do CCM
+        //    driver.Navigate().GoToUrl(baseURL);
+        //    driver.FindElement(By.XPath("//*[@id='ps']/div[1]/section/div/div[4]/p/a[2]")).Click();
+        //    processTest.PrintPageComSelenium(driver, false);
+
+        //    //Validar P�gina Inicial
+        //    Assert.AreEqual("Préviaa", driver.FindElement(By.XPath("//*[@id='localnav']/div/div[2]/div[1]/span")));
+
+        //}
 
         //[Test]
         //public void CT001_Cadastro_de_Clientes_Aposentados()
