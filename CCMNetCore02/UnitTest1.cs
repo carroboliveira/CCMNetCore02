@@ -128,9 +128,11 @@ namespace FluxoVendaCartoes
 
         //}
 
+
         [TearDown]
         public void TeardownTest()
         {
+
             try
             {
                 driver.Quit();
