@@ -154,7 +154,7 @@ namespace FluxoVendaCartoes
 
 
             //Acessar P�gina do CCM
-            driver.Manage().Window.Minimize();
+            //driver.Manage().Window.Minimize();
             driver.Navigate().GoToUrl(baseURL);
             //processTest.PrintPageComSelenium(driver, false);
 
