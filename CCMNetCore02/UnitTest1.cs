@@ -130,11 +130,11 @@ namespace FluxoVendaCartoes
 
         }
 
-        public void wait(By elemento)
-        {
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
-            wait.Until(ExpectedConditions.ElementToBeClickable(elemento));
-        }
+        //public void wait(By elemento)
+        //{
+        //    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
+        //    wait.Until(ExpectedConditions.ElementToBeClickable(elemento));
+        //}
 
         [TearDown]
         public void TeardownTest()
