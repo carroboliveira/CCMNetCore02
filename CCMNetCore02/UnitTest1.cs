@@ -53,7 +53,7 @@ namespace FluxoVendaCartoes
                 }
                 else
                 {
-                    ChService = ChromeDriverService.CreateDefaultService(PathChromeDriver, "chromedriver.exe");
+                    ChService = ChromeDriverService.CreateDefaultService(PathChromeDriver, "chromedriver");
                 }
             }
             else
