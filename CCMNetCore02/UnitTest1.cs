@@ -91,9 +91,9 @@ namespace FluxoVendaCartoes
                     options.AddArgument("--headless");   
                     options.AddArgument("--no-sandbox");
                     options.AddArgument("--disable-dev-shm-usage");
-                    options.AddArgument("--touch-events=enabled");
-                    options.AddArgument("start-maximized");
-                    options.EnableMobileEmulation("iPhone 5/SE");
+                    //options.AddArgument("--touch-events=enabled");
+                    //options.AddArgument("start-maximized");
+                    //options.EnableMobileEmulation("iPhone 5/SE");
                 }
                 driver = new ChromeDriver(ChService, options);
             }
