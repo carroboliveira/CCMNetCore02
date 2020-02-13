@@ -89,8 +89,8 @@ namespace FluxoVendaCartoes
                 if (OSLinux)
                 {
                     options.AddArgument("--headless");   
-                    options.AddArgument("--no-sandbox");
-                    options.AddArgument("--disable-dev-shm-usage");
+                    //options.AddArgument("--no-sandbox");
+                    //options.AddArgument("--disable-dev-shm-usage");
                     //options.AddArgument("--touch-events=enabled");
                     //options.AddArgument("start-maximized");
                     //options.EnableMobileEmulation("iPhone 5/SE");
