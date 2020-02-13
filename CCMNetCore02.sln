@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCMNetCore02", "CCMNetCore02\CCMNetCore02.csproj", "{D82CD16C-FEDC-4CA0-A58D-A410BCE850EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutaTest", "ExecutaTest\ExecutaTest.csproj", "{1271067A-3313-4DFE-9D89-745F6E3ADD4B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{D82CD16C-FEDC-4CA0-A58D-A410BCE850EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D82CD16C-FEDC-4CA0-A58D-A410BCE850EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D82CD16C-FEDC-4CA0-A58D-A410BCE850EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1271067A-3313-4DFE-9D89-745F6E3ADD4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1271067A-3313-4DFE-9D89-745F6E3ADD4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1271067A-3313-4DFE-9D89-745F6E3ADD4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1271067A-3313-4DFE-9D89-745F6E3ADD4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
