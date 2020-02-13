@@ -27,9 +27,9 @@ namespace FluxoVendaCartoes
         public string TipoBrowser = null;
 
         [SetUp]
-        public void SetupTest(string[] pTipoBrowser)
+        public void SetupTest()
         {
-            TipoBrowser = pTipoBrowser[0];
+            TipoBrowser = "CHROME";
             processTest = new ProcessTest();
             InternetExplorerDriverService IEService = null;
             ChromeDriverService ChService = null;
