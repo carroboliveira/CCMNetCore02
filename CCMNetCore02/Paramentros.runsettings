@@ -1,0 +1,18 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<RunSettings>
+<!--Configurations that affect the Test Framework -->
+<RunConfiguration>
+<!--Path relative to solution directory -->
+</RunConfiguration>
+<!--Configurations for data collectors -->
+<DataCollectionRunSettings>
+</DataCollectionRunSettings>
+<!--Parameters used by tests at runtime-->
+<TestRunParameters>
+<Parameter name = "BROWSER" value = "CHROME"/>
+</TestRunParameters>
+<!--Adapter Specific sections-->
+<!--MSTest adapter-->
+<MSTest>
+</MSTest>
+</RunSettings>

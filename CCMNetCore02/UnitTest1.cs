@@ -130,11 +130,11 @@ namespace FluxoVendaCartoes
 
         }
 
-        //public void wait(By elemento)
-        //{
-        //    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
-        //    wait.Until(ExpectedConditions.ElementToBeClickable(elemento));
-        //}
+        public void wait(By elemento)
+        {
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
+            wait.Until(ExpectedConditions.ElementToBeClickable(elemento));
+        }
 
         [TearDown]
         public void TeardownTest()
@@ -153,15 +153,17 @@ namespace FluxoVendaCartoes
         [Test]
         public void CT001_TST01()
         {
-            //Actions touchActions = new Actions(driver);
+        //Actions touchActions = new Actions(driver);
 
-            //processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
-            //processTest.StepNumber = 1;
-            //processTest.StepTurn = 1;
+        //processTest.TestName = System.Reflection.MethodBase.GetCurrentMethod().Name;
+        //processTest.StepNumber = 1;
+        //processTest.StepTurn = 1;
 
-            //Acessar P�gina do CCM
-            //driver.Manage().Window.Minimize();
+        //Acessar P�gina do CCM
+        //driver.Manage().Window.Minimize();
+
             driver.Navigate().GoToUrl(baseURL);
+    
             //processTest.PrintPageComSelenium(driver, false);
 
             //Validar P�gina Inicial
